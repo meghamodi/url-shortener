@@ -28,7 +28,7 @@ app.post('/shortenUrl', [
 
     }
 
-    shortenedURL = `http://localhost.com:3000/${hashGenerator}`
+    shortenedURL = `http://localhost:3000/${hashGenerator}`
     storage.storeHashToUrl(shortenedURL,clientUrl)
 
     res.json({shortenedUrl: shortenedURL})
@@ -38,7 +38,7 @@ app.post('/shortenUrl', [
 
 app.get('/:hashGenerator',(req,res)=>{
     const hashedURL = req.params.hashGenerator
-    const shortenedURL = `http://localhost.com:3000/${hashedURL}`
+    const shortenedURL = `http://localhost:3000/${hashedURL}`
     const originalURL = storage.original_URL_Mapping.get(shortenedURL)
     
 
