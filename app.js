@@ -22,15 +22,39 @@ app.post('/shortenUrl', [
     // Extract the URL using the extractUrl function
     const clientUrl = tools.extractUrl(req);  // This will return the longUrl from the request body
   
-    storage.storeURL(clientUrl)
-    const hashGenerator = storage.URL_hash_Mapping.get(clientUrl);
+    const hashGenerator = storage.storeURL(clientUrl);
     if (!hashGenerator){
         return res.status(500).json({error:"hash not found"})
 
     }
 
-    res.json({shortenedUrl: `http://localhost.com:3000/${hashGenerator}`})
+    shortenedURL = `http://localhost.com:3000/${hashGenerator}`
+    storage.storeHashToUrl(shortenedURL,clientUrl)
+
+    res.json({shortenedUrl: shortenedURL})
+    console.log("Shortened URL Mapping:", storage.URL_hash_Mapping);
+    console.log("Original URL Mapping:", storage.original_URL_Mapping);
 });
+
+app.get('/:hashGenerator',(req,res)=>{
+    const hashedURL = req.params.hashGenerator
+    const shortenedURL = `http://localhost.com:3000/${hashedURL}`
+    const originalURL = storage.original_URL_Mapping.get(shortenedURL)
+    
+
+    if (originalURL){
+        res.redirect(originalURL)
+    }
+    else{
+        res.status(400).json({error:"something went wrong"})
+    }
+    
+}
+   
+
+)
+
+
 app.listen(3000,()=>{
    
     console.log("This is working as expected")
