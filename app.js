@@ -7,12 +7,21 @@ app.use(express.static('public'))
 var tools = require('./utils/extractUrl.js');
 var storage = require('./models/storage.js');
 const { check, validationResult } = require('express-validator');
+const redis =require('redis')
 
-
+const UrlHashMapping = redis.createClient({
+    username: 'default',
+    password: '*****',
+    socket: {
+        host: 'r*****edis-cloud.com',
+        port: 10360
+    }
+});
+//  This endpoint is used for validating the url and extracting client URL
 app.post('/shortenUrl', [
     // Validate 'longUrl' directly in the middleware
     check('longUrl').isURL().withMessage('Invalid URL format')
-], (req, res) => {
+], async(req, res) => {
     // Handle validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -27,6 +36,14 @@ app.post('/shortenUrl', [
         return res.status(500).json({error:"hash not found"})
 
     }
+
+    UrlHashMapping.on('error', err => console.log('Redis Client Error', err));
+    
+    await UrlHashMapping.connect();
+    
+    await UrlHashMapping.set(clientUrl, hashGenerator);
+    const result = await UrlHashMapping.get(clientUrl);
+    console.log(`res: ${result}`)
 
     shortenedURL = `http://localhost:3000/${hashGenerator}`
     storage.storeHashToUrl(shortenedURL,clientUrl)
