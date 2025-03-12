@@ -1,14 +1,37 @@
 // data is not persistent
-const URL_hash_Mapping = new Map();
-const original_URL_Mapping = new Map();
+// const URL_hash_Mapping = new Map();
+// const original_URL_Mapping = new Map();
+const redis = require('redis')
 
-function storeURL(clientURL){
-    if (!URL_hash_Mapping.has(clientURL)){
-        const hash = generateHash()
-        URL_hash_Mapping.set(clientURL,hash)
-        return hash
+const UrlHashMapping = redis.createClient({
+    username: 'default',
+    password: '*****',
+    socket: {
+        host: 'r*****edis-cloud.com',
+        port: 10360
     }
-    URL_hash_Mapping.get(clientURL)
+});
+
+UrlHashMapping.on('error', err => console.log('Redis Client Error', err));
+    
+await UrlHashMapping.connect();
+
+
+async function storeURL(clientURL){
+    let hash = await UrlHashMapping.get(`original_url: ${clientURL}`)
+    if (!hash){
+        hash = generateHash()
+        await UrlHashMapping.set(`original_url: ${clientURL}`,hash)
+        await UrlHashMapping.set(`url_hash: ${hash}`,clientURL)
+
+    }
+    return hash
+    // if (!UrlHashMapping.has(clientURL)){
+    //     const hash = generateHash()
+    //     UrlHashMapping.set(clientURL,hash)
+    //     return hash
+    // }
+    // UrlHashMapping.get(clientURL)
 }
 
 function storeHashToUrl(shortURL,clientURL){

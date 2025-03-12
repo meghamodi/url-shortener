@@ -49,8 +49,7 @@ app.post('/shortenUrl', [
     storage.storeHashToUrl(shortenedURL,clientUrl)
 
     res.json({shortenedUrl: shortenedURL})
-    console.log("Shortened URL Mapping:", storage.URL_hash_Mapping);
-    console.log("Original URL Mapping:", storage.original_URL_Mapping);
+
 });
 
 app.get('/:hashGenerator',(req,res)=>{
