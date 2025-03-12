@@ -1,41 +1,42 @@
 // data is not persistent
 // const URL_hash_Mapping = new Map();
 // const original_URL_Mapping = new Map();
-const redis = require('redis')
+import redis from 'redis'
+import dotenv from 'dotenv';
+dotenv.config({ path: './.env' });
 
 const UrlHashMapping = redis.createClient({
-    username: 'default',
-    password: '*****',
+    username: process.env.USERNAME,
+    password: process.env.PASSWORD,
     socket: {
-        host: 'r*****edis-cloud.com',
-        port: 10360
+        host: process.env.HOST,
+        port: process.env.PORT
     }
 });
 
 UrlHashMapping.on('error', err => console.log('Redis Client Error', err));
     
-await UrlHashMapping.connect();
+(async()=>{
+    await UrlHashMapping.connect();
+
+})();
 
 
 async function storeURL(clientURL){
-    let hash = await UrlHashMapping.get(`original_url: ${clientURL}`)
+    let hash = await UrlHashMapping.get(`original_url:${clientURL}`)
     if (!hash){
         hash = generateHash()
-        await UrlHashMapping.set(`original_url: ${clientURL}`,hash)
-        await UrlHashMapping.set(`url_hash: ${hash}`,clientURL)
+        await UrlHashMapping.set(`original_url:${clientURL}`,hash)
 
     }
     return hash
-    // if (!UrlHashMapping.has(clientURL)){
-    //     const hash = generateHash()
-    //     UrlHashMapping.set(clientURL,hash)
-    //     return hash
-    // }
-    // UrlHashMapping.get(clientURL)
+
 }
 
-function storeHashToUrl(shortURL,clientURL){
-    original_URL_Mapping.set(shortURL,clientURL)
+async function storeHashToUrl(hash,clientURL){
+    const shortURL = `http://localhost:3000/${hash}`
+
+    await UrlHashMapping.set(`short_url:${shortURL}`,clientURL)
     
 }
 
@@ -44,6 +45,6 @@ function generateHash(){
 }
 
 
-module.exports={
-    storeURL,generateHash,URL_hash_Mapping,storeHashToUrl,original_URL_Mapping
+export default{
+    storeURL,generateHash,UrlHashMapping,storeHashToUrl
 }

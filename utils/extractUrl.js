@@ -1,6 +1,6 @@
-const extractUrl =function(req){
+export function extractUrl(req){
     return req.body.longUrl;
 }
-module.exports={
+export default{
     extractUrl
 }
