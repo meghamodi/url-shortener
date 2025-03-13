@@ -43,8 +43,6 @@ app.get('/:hashGenerator',async(req,res)=>{
    
     const originalURL = await storage.UrlHashMapping.get(`short_url:${shortenedURL}`)
 
-    
-
     if (originalURL){
         res.redirect(originalURL)
     }
