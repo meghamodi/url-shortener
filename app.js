@@ -9,6 +9,7 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use(express.json())
 //  This endpoint is used for validating the url and extracting client URL
 app.post('/shortenUrl', [
     // Validate 'longUrl' directly in the middleware
@@ -54,6 +55,7 @@ app.get('/:hashGenerator',async(req,res)=>{
    
 
 )
+app.get('/favicon.ico', (req, res) => res.status(204).end());
 
 
 app.listen(3000,()=>{
