@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/index.css"/>
     <title>URL Shortener</title>   
     <body>
-        <form action="/shortenUrl"  id="shortenForm" method="POST">
-            <label for="longUrl">Long URL: </label>
-            <input type="text" id="longUrl" name="longUrl" required>
-            <button type="submit">Shorten URL</button>
-        </form>
+        <div class="container">
+            <div id="form">
+                <form action="/shortenUrl"  id="shortenForm" method="POST">
+                    <label for="longUrl">Long URL: </label>
+                    <input type="text" id="longUrl" name="longUrl" placeholder="Paste the long URL here" required>
+                    <button type="submit">Shorten URL</button>
+                </form>
+            </div>
 
-        <div id="result" style="display:none;">
-            <p>Shortened URL:<span id="shortUrlText"></span></p>
-            <button id="copyBtn">Copy</button>
+            <div id="shortenedURLBtn" style="display:none;">
+                <p>Shortened URL:<span id="shortUrlText"></span></p>
+                <button id="copyBtn">Copy</button>
 
-        </div >
+            </div>
+        </div>
         <script type="module">
             import { copyShortURL } from './copyShortURL.js';
             document.getElementById("shortenForm").addEventListener("submit",async function(event){
                 event.preventDefault();
                 const longURL = document.getElementById("longUrl").value
-                console.log(`long: ${longURL}`)
                 const response = await fetch('/shortenUrl',{
                     method:"POST",
                     headers: {"Content-Type":"application/json"},
@@ -30,7 +35,7 @@
 
                 if (data.shortenedUrl){
                     document.getElementById("shortUrlText").textContent = data.shortenedUrl;
-                    document.getElementById("result").style.display = "block";
+                    document.getElementById("shortenedURLBtn").style.display = "block";
 
                 } else {
                     console.log("error occured")
@@ -38,8 +43,8 @@
             })
             document.getElementById("copyBtn").addEventListener("click",copyShortURL)
         </script>
-
+    </head>
     </body>
    
-    </head>
+    
 </html>
