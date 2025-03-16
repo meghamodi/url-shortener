@@ -10,6 +10,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(express.json())
+
 //  This endpoint is used for validating the url and extracting client URL
 app.post('/shortenUrl', [
     // Validate 'longUrl' directly in the middleware

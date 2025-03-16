@@ -2,46 +2,44 @@
 <html lang="en">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Shortener</title>
-        
-      
-            <body>
-                <form action="/shortenUrl"  id="shortenForm" method="POST">
-                    <label for="longUrl">Long URL: </label>
-                    <input type="text" id="longUrl" name="longUrl" required>
-                    <button type="submit">Shorten URL</button>
-                </form>
+    <title>URL Shortener</title>   
+    <body>
+        <form action="/shortenUrl"  id="shortenForm" method="POST">
+            <label for="longUrl">Long URL: </label>
+            <input type="text" id="longUrl" name="longUrl" required>
+            <button type="submit">Shorten URL</button>
+        </form>
 
-                <div id="result" style="display:none;">
-                    <p>Shortened URL:<span id="shortUrlText"></span></p>
-                    <button id="copyBtn">Copy</button>
+        <div id="result" style="display:none;">
+            <p>Shortened URL:<span id="shortUrlText"></span></p>
+            <button id="copyBtn">Copy</button>
 
-                </div >
-                <script type="module">
-                    import { copyShortURL } from './copyShortURL.js';
-                    document.getElementById("shortenForm").addEventListener("submit",async function(event){
-                        event.preventDefault();
-                        const longURL = document.getElementById("longUrl").value
-                        console.log(`long: ${longURL}`)
-                        const response = await fetch('/shortenUrl',{
-                            method:"POST",
-                            headers: {"Content-Type":"application/json"},
-                            body:JSON.stringify({longUrl: longURL})
-                        })
-                        const data = await response.json()
+        </div >
+        <script type="module">
+            import { copyShortURL } from './copyShortURL.js';
+            document.getElementById("shortenForm").addEventListener("submit",async function(event){
+                event.preventDefault();
+                const longURL = document.getElementById("longUrl").value
+                console.log(`long: ${longURL}`)
+                const response = await fetch('/shortenUrl',{
+                    method:"POST",
+                    headers: {"Content-Type":"application/json"},
+                    body:JSON.stringify({longUrl: longURL})
+                })
+                const data = await response.json()
 
-                        if (data.shortenedUrl){
-                            document.getElementById("shortUrlText").textContent = data.shortenedUrl;
-                            document.getElementById("result").style.display = "block";
+                if (data.shortenedUrl){
+                    document.getElementById("shortUrlText").textContent = data.shortenedUrl;
+                    document.getElementById("result").style.display = "block";
 
-                        } else {
-                            console.log("error occured")
-                        }
-                    })
-                    document.getElementById("copyBtn").addEventListener("click",copyShortURL)
-                </script>
+                } else {
+                    console.log("error occured")
+                }
+            })
+            document.getElementById("copyBtn").addEventListener("click",copyShortURL)
+        </script>
 
-            </body>
+    </body>
    
     </head>
 </html>
