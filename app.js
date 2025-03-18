@@ -42,24 +42,23 @@ app.post('/shortenUrl', [
 app.get('/:hashGenerator',async(req,res)=>{
     const hashedURL = req.params.hashGenerator
     const shortenedURL = `http://localhost:3000/${hashedURL}`
-   
-    const originalURL = await storage.UrlHashMapping.get(`short_url:${shortenedURL}`)
+   try{
+        const originalURL = await storage.UrlHashMapping.get(`short_url:${shortenedURL}`)
+        if (originalURL){
+            res.redirect(originalURL)
+        }
+        else{
+            res.status(400).json({error:"something went wrong"})
+        }
+    } catch(err){
+        console.error("something went wrong:", err)
+        res.status(500).json({error:err.message})
 
-    if (originalURL){
-        res.redirect(originalURL)
     }
-    else{
-        res.status(400).json({error:"something went wrong"})
-    }
-    
-}
-   
+})
 
-)
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 
 
 app.listen(3000,()=>{
-   
-    console.log("This is working as expected")
 })
